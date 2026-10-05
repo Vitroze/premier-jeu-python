@@ -6,11 +6,20 @@ screen = pygame.display.set_mode((1080, 720)) # Size frame
 pygame.display.set_caption("My first game") # Title
 clock = pygame.time.Clock() # FPS (Frame Per Seconds)
 
+# Load a background picture
+background = pygame.image.load("assets/background.jpg")
+background = pygame.transform.scale(background, (1080, 720))
+
+# Load Player
+player = pygame.image.load("assets/player.png")
+
 running = True
 while running: # Game loop to update the screen in real time
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
+    screen.blit(background, (0, 0))
 
 pygame.quit()
             
