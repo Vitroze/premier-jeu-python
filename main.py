@@ -10,12 +10,12 @@ clock = pygame.time.Clock() # FPS (Frame Per Seconds)
 
 # Load a background picture
 background = pygame.image.load("assets/background.jpg")
-background = pygame.transform.scale(background, (1080, 720))
+background = pygame.transform.scale(background, (screen.get_width(), screen.get_height()))
 
 # Load Player
 player = pygame.image.load("assets/player.png")
 player = pygame.transform.scale(player, (100, 100))
-player_x, player_y = random.randint(0, 1080 - player.get_width()), random.randint(0, 720 - player.get_height())
+player_x, player_y = random.randint(0, screen.get_width() - player.get_width()), random.randint(0, screen.get_height() - player.get_height())
 player_rect = player.get_rect() # Create collision bounds
 
 running = True
@@ -50,8 +50,8 @@ def move(keys):
             player_x += dx
             player_y += dy
 
-    player_x = Clamp(player_x, 0, 1080 - player.get_width())
-    player_y = Clamp(player_y, 0, 720 - player.get_height())
+    player_x = Clamp(player_x, 0, screen.get_width() - player.get_width())
+    player_y = Clamp(player_y, 0, screen.get_height() - player.get_height())
     player_rect.topleft = (player_x, player_y) # Update collision bounds
 
 alien_x, alien_y = 0, 0
@@ -64,8 +64,8 @@ def update_position_alien(no_cooldown=False):
     global alien_x
     global alien_y
     
-    alien_x = random.randint(0, 1080 - alien.get_width())
-    alien_y = random.randint(0, 720 - alien.get_height())
+    alien_x = random.randint(0, screen.get_width() - alien.get_width())
+    alien_y = random.randint(0, screen.get_height() - alien.get_height())
     time_cooldown = time.time() + random.randint(2, 10)
     alien_rect.topleft = (alien_x, alien_y) # Update Collision Bounds
 
