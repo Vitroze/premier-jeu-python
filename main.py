@@ -33,8 +33,7 @@ def Clamp(value, min_value, max_value):
 
 
 def move(keys):
-    global player_x
-    global player_y
+    global player_x, player_y
     
     speed = 8 if keys[pygame.K_LSHIFT] else 4
     
@@ -61,8 +60,7 @@ def update_position_alien(no_cooldown=False):
     if time.time() < time_cooldown and not no_cooldown:
         return
     
-    global alien_x
-    global alien_y
+    global alien_x, alien_y
     
     alien_x = random.randint(0, screen.get_width() - alien.get_width())
     alien_y = random.randint(0, screen.get_height() - alien.get_height())
