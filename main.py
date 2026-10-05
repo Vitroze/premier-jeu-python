@@ -67,6 +67,9 @@ def update_position_alien(no_cooldown=False):
     time_cooldown = time.time() + random.randint(2, 10)
     alien_rect.topleft = (alien_x, alien_y) # Update Collision Bounds
 
+pygame.font.init()
+police1 = pygame.font.SysFont("Arial", 20)
+
 while running: # Game loop to update the screen in real time
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -84,6 +87,13 @@ while running: # Game loop to update the screen in real time
 
     if player_rect.colliderect(alien_rect):
         update_position_alien(True)
+    
+    # Debug Mode
+    text = police1.render(f"{clock.get_fps()}FPS", 1, (0, 0, 0))
+    screen.blit(text, (0, 0))
+    # -----------------------------
+    
+    clock.tick(30)
 
 pygame.quit()
             
