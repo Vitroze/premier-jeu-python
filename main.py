@@ -1,6 +1,7 @@
 #import asyncio
 import pygame
 import random
+import time
 
 pygame.init() # Load component (collide, sprites, scene)
 screen = pygame.display.set_mode((1080, 720)) # Size frame
@@ -15,8 +16,12 @@ background = pygame.transform.scale(background, (1080, 720))
 player = pygame.image.load("assets/player.png")
 player = pygame.transform.scale(player, (100, 100))
 player_x, player_y = random.randint(0, 1080 - player.get_width()), random.randint(0, 720 - player.get_height())
+player_rect = player.get_rect() # Create collision bounds
 
 running = True
+
+alien = pygame.image.load("assets/alien.png")
+alien_rect = alien.get_rect() # Create collision bounds
 
 def Clamp(value, min_value, max_value):
     if value > max_value:
@@ -41,10 +46,25 @@ def move(keys):
         player_y -= speed
     if keys[pygame.K_DOWN]:
         player_y += speed
-
+        
     player_x = Clamp(player_x, 0, 1080 - player.get_width())
     player_y = Clamp(player_y, 0, 720 - player.get_height())
+    player_rect.topleft = (player_x, player_y) # Update collision bounds
+
+alien_x, alien_y = 0, 0
+time_cooldown = time.time() + random.randint(2, 10)
+def update_position_alien(no_cooldown=False):
+    global time_cooldown
+    if time.time() < time_cooldown and not no_cooldown:
+        return
     
+    global alien_x
+    global alien_y
+    
+    alien_x = random.randint(0, 1080 - alien.get_width())
+    alien_y = random.randint(0, 720 - alien.get_height())
+    time_cooldown = time.time() + random.randint(2, 10)
+    alien_rect.topleft = (alien_x, alien_y) # Update Collision Bounds
 
 while running: # Game loop to update the screen in real time
     for event in pygame.event.get():
@@ -54,9 +74,15 @@ while running: # Game loop to update the screen in real time
 
     screen.blit(background, (0, 0))
     screen.blit(player, (player_x, player_y))
-        
+    
+    screen.blit(alien, (alien_x, alien_y))
+    update_position_alien()
+    
     keys = pygame.key.get_pressed()
     move(keys)
+
+    if player_rect.colliderect(alien_rect):
+        update_position_alien(True)
 
 pygame.quit()
             
