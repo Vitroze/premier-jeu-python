@@ -38,15 +38,18 @@ def move(keys):
     
     speed = 8 if keys[pygame.K_LSHIFT] else 4
     
-    if keys[pygame.K_LEFT]:
-        player_x -= speed
-    if keys[pygame.K_RIGHT]:
-        player_x += speed
-    if keys[pygame.K_UP]:
-        player_y -= speed
-    if keys[pygame.K_DOWN]:
-        player_y += speed
-        
+    moves = {
+        pygame.K_LEFT: (-speed, 0),
+        pygame.K_RIGHT: (speed, 0),
+        pygame.K_UP: (0, -speed),
+        pygame.K_DOWN: (0, speed),
+    }
+    
+    for key, (dx, dy) in moves.items():
+        if keys[key]:
+            player_x += dx
+            player_y += dy
+
     player_x = Clamp(player_x, 0, 1080 - player.get_width())
     player_y = Clamp(player_y, 0, 720 - player.get_height())
     player_rect.topleft = (player_x, player_y) # Update collision bounds
