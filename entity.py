@@ -1,5 +1,4 @@
 import pygame
-import random
 
 def Clamp(value, min_value, max_value):
     if value > max_value:
@@ -50,14 +49,14 @@ class Entity(pygame.sprite.Sprite):
             if self.image and scale != None and type(scale) == tuple:
                 self.image = pygame.transform.scale(self.image, scale)
 
-            self.collision_bounds = self.picture.get_rect()
+            self.collision_bounds = self.image.get_rect()
         except:
             pass
         
     def get_material(self):
         return self.image
     
-    def tick(self): 
+    def think(self): 
         if not self.collision_bounds:
             return
 

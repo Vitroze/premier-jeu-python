@@ -1,4 +1,5 @@
 from entity import *
+import pygame
 
 class Player(Entity):
     def __init__(self, screen):
@@ -34,7 +35,8 @@ class Player(Entity):
         
         self.set_pos((player_x, player_y))
         
-    def tick(self):
+    def think(self):
+        super().think()
         self.move()
     
     def set_armor(self, armor):
@@ -57,5 +59,4 @@ class Player(Entity):
         return self.speed
     
     def is_player(self):
-
         return True

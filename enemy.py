@@ -1,6 +1,7 @@
 from entity import *
 from utils import *
 import time
+import random
 
 class Enemy(Entity):
     def __init__(self, screen):
@@ -18,8 +19,8 @@ class Enemy(Entity):
                     random.randint(0, self.screen.get_height() - self.get_material().get_height()))
                    )
         
-    def tick(self):
-        super().tick()
+    def think(self):
+        super().think()
         self.update_position()
     
     def on_collision_bounds(self, target):
@@ -28,7 +29,6 @@ class Enemy(Entity):
         if target.is_player():
             self.update_position(True)
             add_score()
-            show_score()
     
     def set_armor(self, armor):
         if not armor or type(armor) != int or armor < 0:
