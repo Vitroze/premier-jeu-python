@@ -18,7 +18,7 @@ class Entity(pygame.sprite.Sprite):
         super().__init__()
         self.screen = screen
         self.health = 100
-        self.picture = None
+        self.image = None
         self.collision_bounds = None
         self.position = (0, 0)
         self.blacklist = []
@@ -45,17 +45,17 @@ class Entity(pygame.sprite.Sprite):
             return
 
         try:
-            self.picture = pygame.image.load(picture, "")
+            self.image = pygame.image.load(picture, "")
             
-            if self.picture and scale != None and type(scale) == tuple:
-                self.picture = pygame.transform.scale(self.picture, scale)
+            if self.image and scale != None and type(scale) == tuple:
+                self.image = pygame.transform.scale(self.image, scale)
 
             self.collision_bounds = self.picture.get_rect()
         except:
             pass
         
     def get_material(self):
-        return self.picture
+        return self.image
     
     def tick(self): 
         if not self.collision_bounds:

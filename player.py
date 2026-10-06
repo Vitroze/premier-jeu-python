@@ -57,4 +57,5 @@ class Player(Entity):
         return self.speed
     
     def is_player(self):
+
         return True

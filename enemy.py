@@ -19,6 +19,7 @@ class Enemy(Entity):
                    )
         
     def tick(self):
+        super().tick()
         self.update_position()
     
     def on_collision_bounds(self, target):
