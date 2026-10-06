@@ -2,6 +2,10 @@
 import pygame
 import random
 import time
+from entity import *
+from player import *
+from enemy import *
+from utils import get_score
 
 pygame.init() # Load component (collide, sprites, scene)
 screen = pygame.display.set_mode((1080, 720)) # Size frame
@@ -13,62 +17,54 @@ background = pygame.image.load("assets/background.jpg")
 background = pygame.transform.scale(background, (screen.get_width(), screen.get_height()))
 
 # Load Player
-player = pygame.image.load("assets/player.png")
-player = pygame.transform.scale(player, (100, 100))
-player_x, player_y = random.randint(0, screen.get_width() - player.get_width()), random.randint(0, screen.get_height() - player.get_height())
-player_rect = player.get_rect() # Create collision bounds
-
+player = Player(screen)
+player.set_material("assets/player.png", (100, 100))
 running = True
 
-alien = pygame.image.load("assets/alien.png")
-alien_rect = alien.get_rect() # Create collision bounds
+# alien = pygame.image.load("assets/alien.png")
+# alien_rect = alien.get_rect() # Create collision bounds
 
-def Clamp(value, min_value, max_value):
-    if value > max_value:
-        value = max_value
-    elif value < min_value:
-        value = min_value
+alien = Enemy(screen)
+alien.set_material("assets/alien.png")
+# def move(keys):
+#     global player_x, player_y
     
-    return value
+#     speed = 8 if keys[pygame.K_LSHIFT] else 4
+    
+#     moves = {
+#         pygame.K_LEFT: (-speed, 0),
+#         pygame.K_RIGHT: (speed, 0),
+#         pygame.K_UP: (0, -speed),
+#         pygame.K_DOWN: (0, speed),
+#     }
+    
+#     for key, (dx, dy) in moves.items():
+#         if keys[key]:
+#             player_x += dx
+#             player_y += dy
 
+#     player_x = Clamp(player_x, 0, screen.get_width() - player.get_width())
+#     player_y = Clamp(player_y, 0, screen.get_height() - player.get_height())
+#     player_rect.topleft = (player_x, player_y) # Update collision bounds
 
-def move(keys):
-    global player_x, player_y
+# def update_position_alien(no_cooldown=False):
+#     global time_cooldown
+#     if time.time() < time_cooldown and not no_cooldown:
+#         return
     
-    speed = 8 if keys[pygame.K_LSHIFT] else 4
+#     global alien_x, alien_y
     
-    moves = {
-        pygame.K_LEFT: (-speed, 0),
-        pygame.K_RIGHT: (speed, 0),
-        pygame.K_UP: (0, -speed),
-        pygame.K_DOWN: (0, speed),
-    }
-    
-    for key, (dx, dy) in moves.items():
-        if keys[key]:
-            player_x += dx
-            player_y += dy
-
-    player_x = Clamp(player_x, 0, screen.get_width() - player.get_width())
-    player_y = Clamp(player_y, 0, screen.get_height() - player.get_height())
-    player_rect.topleft = (player_x, player_y) # Update collision bounds
-
-alien_x, alien_y = 0, 0
-time_cooldown = time.time() + random.randint(2, 10)
-def update_position_alien(no_cooldown=False):
-    global time_cooldown
-    if time.time() < time_cooldown and not no_cooldown:
-        return
-    
-    global alien_x, alien_y
-    
-    alien_x = random.randint(0, screen.get_width() - alien.get_width())
-    alien_y = random.randint(0, screen.get_height() - alien.get_height())
-    time_cooldown = time.time() + random.randint(2, 10)
-    alien_rect.topleft = (alien_x, alien_y) # Update Collision Bounds
+#     alien_x = random.randint(0, screen.get_width() - alien.get_width())
+#     alien_y = random.randint(0, screen.get_height() - alien.get_height())
+#     time_cooldown = time.time() + random.randint(2, 10)
+#     alien_rect.topleft = (alien_x, alien_y) # Update Collision Bounds
 
 pygame.font.init()
 police1 = pygame.font.SysFont("Arial", 20)
+
+def drawText(police, text, color=(0, 0, 0), pos=(0, 0)):
+    text = police.render(text, 1, color)
+    screen.blit(text, pos)
 
 while running: # Game loop to update the screen in real time
     for event in pygame.event.get():
@@ -77,26 +73,43 @@ while running: # Game loop to update the screen in real time
             break
 
     screen.blit(background, (0, 0))
-    screen.blit(player, (player_x, player_y))
-    
-    screen.blit(alien, (alien_x, alien_y))
-    update_position_alien()
-    
-    keys = pygame.key.get_pressed()
-    move(keys)
+    # screen.blit(player, (player_x, player_y))
 
-    if player_rect.colliderect(alien_rect):
-        update_position_alien(True)
-    
+    # screen.blit(alien, (alien_x, alien_y))
+    # update_position_alien()
+
+    for entity in get_all_entities():
+            if entity.paint:
+                try:
+                    entity.paint()
+                except Exception as e:
+                    print(f"Erreur sur ENTITY:paint : {entity}: {type(e).__name__} - {e}")
+
+            if entity.tick:
+                try:
+                    entity.tick()
+                except Exception as e:
+                    print(f"Erreur sur ENTITY:tick : {entity} : {type(e).__name__} - {e}")
+
+
+    # if player_rect.colliderect(alien_rect):
+    #     update_position_alien(True)
+
     # Debug Mode
-    text = police1.render(f"{clock.get_fps()}FPS", 1, (0, 0, 0))
-    screen.blit(text, (0, 0))
+    #text = police1.render(f"{clock.get_fps()}FPS", 1, (0, 0, 0))
+    #screen.blit(text, (0, 0))
+    drawText(police1, f"{clock.get_fps()}FPS", (0, 0, 0), (0, 0))
+    drawText(police1, f"Temps en secondes :{time.time()}", (0, 0, 0), (0, 20))
+    score = f"Score : {get_score()}"
+    w, _ = police1.size(score)
+    drawText(police1, score, (0, 0, 0), (screen.get_width() - w - 20, 0))
     # -----------------------------
-    
-    clock.tick(30)
 
+    clock.tick(60)
+
+print("quit")
 pygame.quit()
-            
+
 # async def main():
 #     # Position et vitesse du joueur
 #     x, y = 240, 180
